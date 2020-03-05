@@ -1,4 +1,6 @@
 const bcrypt = require('bcrypt-nodejs');
+const redis = require("redis");
+const client = redis.createClient();
 
 function saveUser(req,res){
     User = require('../models/user');
@@ -12,20 +14,8 @@ function saveUser(req,res){
         // if (err) throw err;
 
         // fetch user and test password verification
-        User.findOne({ username: 'jmar777' }, function(err, user) {
+        User.findOne({ username: req.body.username}, function(err, user) {
             if (err) throw err;
-
-            // test a matching password
-            user.comparePassword('Password123', function(err, isMatch) {
-                if (err) throw err;
-                console.log('Password123:', isMatch); // -> Password123: true
-            });
-
-            // test a failing password
-            user.comparePassword('123Password', function(err, isMatch) {
-                if (err) throw err;
-                console.log('123Password:', isMatch); // -> 123Password: false
-            });
         });
 
     });
@@ -65,23 +55,21 @@ function deleteUser(req,res){
         });
 }
 function login(req,res){
-
     const User = require('../models/user');
     // const username = req.body.username;
     User.findOne({username : req.body.username}, function(err, user) {
-
-
-
         const isSame = user.comparePassword(req.body.password);
-
         res.json(isSame);
-
+        if(isSame){
+            client.on("error", function(error) {
+                console.error(error);
+            });      
+            client.set(req.body.username,0, redis.print);
+            client.get(req.body.username, redis.print);
+        }
     });
-
-
-
-
 }
+
 module.exports.login = login;
 module.exports.deleteUser = deleteUser;
 module.exports.getUsers=getUsers;
