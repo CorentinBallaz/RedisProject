@@ -1,8 +1,10 @@
+
+
 function saveUser(req,res){
     User = require('../models/user');
     var testUser = new User({
-        username: 'jmar777',
-        password: 'Password123'
+        username: 'jmar77',
+        password: 'Password1234'
     });
 
 // save user to database

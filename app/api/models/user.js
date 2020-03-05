@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    bcrypt = require('bcrypt'),
+    bcrypt = require('bcrypt-nodejs'),
     SALT_WORK_FACTOR = 10;
 
 var UserSchema = new Schema({
@@ -19,7 +19,7 @@ UserSchema.pre('save', function(next) {
         if (err) return next(err);
 
         // hash the password using our new salt
-        bcrypt.hash(user.password, salt, function(err, hash) {
+        bcrypt.hash(user.password, salt,null, function(err, hash) {
             if (err) return next(err);
 
             // override the cleartext password with the hashed one
@@ -29,11 +29,14 @@ UserSchema.pre('save', function(next) {
     });
 });
 
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
+// UserSchema.methods.comparePassword = function(candidatePassword, cb) {
+//     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+//         if (err) return cb(err);
+//         cb(null, isMatch);
+//     });
+UserSchema.methods.comparePassword = function(candidatePassword) {
+    let user = this;
+    return bcrypt.compareSync(candidatePassword,user.password);
 };
 
 module.exports = mongoose.model('User', UserSchema);

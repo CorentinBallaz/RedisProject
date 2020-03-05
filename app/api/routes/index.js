@@ -3,8 +3,26 @@ const controller = require('../controllers');
 
 router.get('/',(req,res)=>{
     controller.saveUser(req,res);
-    res.send('user added');
+    res.send("testes")
     // controller.getAllRecipes(req,res);
 });
+
+// router.get('/user/:username',(req,res)=>{
+//
+// });
+//
+//
+//
+// router.post('/user',(req,res)=>{
+//     controller.saveUser(req,res);
+// });
+//
+// router.update('/user/:username',(req,res)=>{
+//
+// });
+//
+// router.delete('/user/:username',(req,res)=>{
+//
+// });
 
 module.exports=router;
