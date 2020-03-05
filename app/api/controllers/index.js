@@ -73,16 +73,9 @@ function login(req,res){
 
 
         const isSame = user.comparePassword(req.body.password);
-        //
-        // // const isTheSame= bcrypt.compareSync(req.body.password,user.password);
-        //
-        // console.log("passe dans le find ");
+
         res.json(isSame);
-    //     if (isTheSame ){
-    //         res.json("the same")
-    //     }else {
-    //         res.json("not the same")
-    //     }
+
     });
 
 
