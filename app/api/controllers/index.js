@@ -3,13 +3,13 @@
 function saveUser(req,res){
     User = require('../models/user');
     var testUser = new User({
-        username: 'jmar77',
-        password: 'Password1234'
+        username: req.body.username,
+        password: req.body.password
     });
 
 // save user to database
     testUser.save(function(err) {
-        if (err) throw err;
+        // if (err) throw err;
 
         // fetch user and test password verification
         User.findOne({ username: 'jmar777' }, function(err, user) {
@@ -27,7 +27,44 @@ function saveUser(req,res){
                 console.log('123Password:', isMatch); // -> 123Password: false
             });
         });
+
     });
+    res.json("sucess");
 }
 
+function getUser(req,res){
+    const User = require('../models/user');
+
+    User.find({username : req.params.username}, function(err, user) {
+
+        if (err) throw err;
+
+        res.json(user);
+
+    });
+}
+function getUsers(req,res){
+    const User = require('../models/user');
+
+    User.find({}, function(err, users) {
+
+        if (err) throw err;
+
+        res.json(users);
+
+    });
+}
+function deleteUser(req,res){
+    const User = require('../models/user');
+    User.findOneAndRemove(
+        {username : req.body.username}, function(err, todo) {
+            if (err) throw err;
+
+            res.json({info: 'Success'});
+
+        });
+}
+module.exports.deleteUser = deleteUser;
+module.exports.getUsers=getUsers;
+module.exports.getUser = getUser;
 module.exports.saveUser = saveUser;
