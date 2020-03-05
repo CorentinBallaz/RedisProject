@@ -1,10 +1,14 @@
 const bcrypt = require('bcrypt-nodejs');
-
+const redis = require('redis');
+const client = redis.createClient();
 function saveUser(req,res){
     User = require('../models/user');
     var testUser = new User({
-        username: req.body.username,
-        password: req.body.password
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        password: req.body.password,
+
     });
 
 // save user to database
@@ -12,20 +16,10 @@ function saveUser(req,res){
         // if (err) throw err;
 
         // fetch user and test password verification
-        User.findOne({ username: 'jmar777' }, function(err, user) {
+        User.findOne({firstname: req.body.firstname }, function(err, user) {
             if (err) throw err;
 
             // test a matching password
-            user.comparePassword('Password123', function(err, isMatch) {
-                if (err) throw err;
-                console.log('Password123:', isMatch); // -> Password123: true
-            });
-
-            // test a failing password
-            user.comparePassword('123Password', function(err, isMatch) {
-                if (err) throw err;
-                console.log('123Password:', isMatch); // -> 123Password: false
-            });
         });
 
     });
@@ -33,9 +27,11 @@ function saveUser(req,res){
 }
 
 function getUser(req,res){
+
+
     const User = require('../models/user');
 
-    User.find({username : req.params.username}, function(err, user) {
+    User.find({firstname : req.params.firstname}, function(err, user) {
 
         if (err) throw err;
 
@@ -45,19 +41,27 @@ function getUser(req,res){
 }
 function getUsers(req,res){
     const User = require('../models/user');
+    // console.log(req.header('Authorization'));
+    const jwt = require('jsonwebtoken');
+    const token = req.header('Authorization').replace('Bearer ', '');
+    try{
+        const payload = jwt.verify(token, process.env.JWT_SECRET) ;
+        User.find({}, function(err, users) {
 
-    User.find({}, function(err, users) {
+            if (err) throw err;
 
-        if (err) throw err;
+            res.json(users);
 
-        res.json(users);
+        });
+    }catch (e) {
+        res.json("permission denied")
+    }
 
-    });
 }
 function deleteUser(req,res){
     const User = require('../models/user');
     User.findOneAndRemove(
-        {username : req.body.username}, function(err, todo) {
+        {firstname : req.body.firstname}, function(err, user) {
             if (err) throw err;
 
             res.json({info: 'Success'});
@@ -68,13 +72,23 @@ function login(req,res){
 
     const User = require('../models/user');
     // const username = req.body.username;
-    User.findOne({username : req.body.username}, function(err, user) {
+    User.findOne({firstname : req.body.firstname}, function(err, user) {
 
 
 
         const isSame = user.comparePassword(req.body.password);
+        if (isSame){
+            const jwt = require('jsonwebtoken')
+            const token = jwt.sign({ _id: user._id, admin: true }, process.env.JWT_SECRET, { expiresIn: '1 week' })
+            //normaly, this token is stored in an redis bdd with username and this token
+            // user.token = token;
+            // user.save();
+            client.set(String(user._id),token);
+            res.json(token);
+        }else{
+            res.json("isnt the same");
+        }
 
-        res.json(isSame);
 
     });
 

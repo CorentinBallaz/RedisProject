@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const controller = require('../controllers');
 
-router.get('/user/:username',(req,res)=>{
+router.get('/user/:firstname',(req,res)=>{
     // controller.saveUser(req,res);
     // res.send("testes")
     controller.getUser(req,res);
@@ -18,7 +18,7 @@ router.post('/user',(req,res)=>{
 })
 
 
-router.delete('/user/:username',(req,res)=>{
+router.delete('/user/:name',(req,res)=>{
     controller.deleteUser(req,res);
 });
 
