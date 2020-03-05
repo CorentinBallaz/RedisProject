@@ -22,4 +22,8 @@ router.delete('/user/:username',(req,res)=>{
     controller.deleteUser(req,res);
 });
 
+router.post('/login',(req,res)=>{
+    controller.login(req,res);
+})
+
 module.exports=router;

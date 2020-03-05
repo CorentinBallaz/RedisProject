@@ -1,4 +1,4 @@
-
+const bcrypt = require('bcrypt-nodejs');
 
 function saveUser(req,res){
     User = require('../models/user');
@@ -64,6 +64,32 @@ function deleteUser(req,res){
 
         });
 }
+function login(req,res){
+
+    const User = require('../models/user');
+    // const username = req.body.username;
+    User.findOne({username : req.body.username}, function(err, user) {
+
+
+
+        const isSame = user.comparePassword(req.body.password);
+        //
+        // // const isTheSame= bcrypt.compareSync(req.body.password,user.password);
+        //
+        // console.log("passe dans le find ");
+        res.json(isSame);
+    //     if (isTheSame ){
+    //         res.json("the same")
+    //     }else {
+    //         res.json("not the same")
+    //     }
+    });
+
+
+
+
+}
+module.exports.login = login;
 module.exports.deleteUser = deleteUser;
 module.exports.getUsers=getUsers;
 module.exports.getUser = getUser;
