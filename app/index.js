@@ -14,13 +14,13 @@ app.use(APIRoutes);
 
 //-------- DB -----------------
 
-// const mongoose = require('mongoose');
-// database = 'mongodb://localhost:27017/redisTPDB';
-// mongoose.connect(database,(err)=>{
-//     if(err)
-//         throw err;
-//     console.log('conneced to the database')
-// });
+const mongoose = require('mongoose');
+database = 'mongodb://localhost:27017/redisTPDB';
+mongoose.connect(database,(err)=>{
+    if(err)
+        throw err;
+    console.log('conneced to the database')
+});
 
 
 app.listen(3000);

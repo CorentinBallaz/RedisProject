@@ -2,8 +2,8 @@ const router = require('express').Router();
 const controller = require('../controllers');
 
 router.get('/',(req,res)=>{
-
-    res.send('Express response');
+    controller.saveUser(req,res);
+    res.send('user added');
     // controller.getAllRecipes(req,res);
 });
 
